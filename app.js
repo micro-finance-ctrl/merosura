@@ -1,45 +1,51 @@
 const board = document.getElementById("board");
 const startBtn = document.getElementById("startBtn");
-const timeEl = document.getElementById("time");
 const nameInput = document.getElementById("playerName");
-const moveSound = document.getElementById("moveSound");
+const timeEl = document.getElementById("time");
 const affiliate = document.getElementById("affiliate");
+const moveSound = document.getElementById("moveSound");
 
 let size = 3, tiles = [], playing = false;
 let startTime, timer;
 
-init();
+/* 名前必須 */
+nameInput.addEventListener("input", () => {
+  startBtn.disabled = nameInput.value.trim() === "";
+});
 
-function init() {
-  playing = false;
-  clearInterval(timer);
-  timeEl.textContent = "time: --";
-  tiles = [...Array(size*size).keys()];
-  board.style.gridTemplateColumns = `repeat(${size},1fr)`;
-  affiliate.classList.add("hidden");
-  affiliate.classList.remove("show");
-  render();
-}
-
-document.querySelectorAll(".sizes button").forEach(b=>{
-  b.onclick=()=>{
-    size=+b.dataset.size;
-    document.querySelectorAll(".sizes button").forEach(x=>x.classList.remove("active"));
-    b.classList.add("active");
+/* サイズ */
+document.querySelectorAll(".sizes button").forEach(btn=>{
+  btn.onclick=()=>{
+    size=+btn.dataset.size;
+    document.querySelectorAll(".sizes button").forEach(b=>b.classList.remove("active"));
+    btn.classList.add("active");
     init();
   };
 });
 
 startBtn.onclick=()=>!playing&&startGame();
 
+/* 初期化 */
+function init(){
+  playing=false;
+  clearInterval(timer);
+  timeEl.textContent="time: --";
+  tiles=[...Array(size*size).keys()];
+  board.style.gridTemplateColumns=`repeat(${size},1fr)`;
+  affiliate.classList.add("hidden");
+  affiliate.classList.remove("show");
+  render();
+}
+init();
+
+/* スタート */
 function startGame(){
   playing=true;
   shuffleSolvable();
   startTime=Date.now();
-  timer=setInterval(()=> {
+  timer=setInterval(()=>{
     timeEl.textContent=`time: ${Math.floor((Date.now()-startTime)/1000)}s`;
   },1000);
-
   if(size>=4){
     affiliate.classList.remove("hidden");
     setTimeout(()=>affiliate.classList.add("show"),800);
@@ -47,10 +53,10 @@ function startGame(){
   render();
 }
 
-/* ==== 以下、パズルロジックは安定版そのまま ==== */
-/* （前回までと同一・省略せず全実装） */
-
-function shuffleSolvable(){ do{ tiles.sort(()=>Math.random()-0.5); }while(!isSolvable()); }
+/* シャッフル */
+function shuffleSolvable(){
+  do{ tiles.sort(()=>Math.random()-0.5); }while(!isSolvable());
+}
 function isSolvable(){
   let inv=0;
   for(let i=0;i<tiles.length;i++)
@@ -61,6 +67,7 @@ function isSolvable(){
   return row%2===0?inv%2===1:inv%2===0;
 }
 
+/* 描画 */
 function render(){
   board.innerHTML="";
   tiles.forEach((n,i)=>{
@@ -72,6 +79,7 @@ function render(){
   });
 }
 
+/* 移動（基本） */
 function move(i){
   const e=tiles.indexOf(0);
   const fr=Math.floor(i/size),fc=i%size;
@@ -84,18 +92,23 @@ function move(i){
   }
 }
 
+/* クリア */
 function finish(){
   playing=false;
   clearInterval(timer);
-  document.getElementById("resultText").textContent=
-    `${nameInput.value||"user"} - ${Math.floor((Date.now()-startTime)/1000)}s`;
+  const time=Math.floor((Date.now()-startTime)/1000);
+  document.getElementById("clearMainResult").textContent=
+    `${nameInput.value} - ${time}s`;
+  document.getElementById("clearBadge").textContent="🎉 自己ベスト！";
+  document.getElementById("selfRankText").textContent="👤 自己ランキング：1位";
+  document.getElementById("worldRankText").textContent="🌍 世界ランキング：1位";
   document.getElementById("clearModal").classList.remove("hidden");
   launchConfetti();
 }
 
+/* クリア操作 */
 document.getElementById("retryBtn").onclick=()=>{ closeModal(); startGame(); };
 document.getElementById("okBtn").onclick=closeModal;
-
 document.getElementById("shareBtn").onclick=async()=>{
   if(navigator.share){
     await navigator.share({title:"Merosura",url:location.href});
@@ -104,11 +117,11 @@ document.getElementById("shareBtn").onclick=async()=>{
     alert("URLをコピーしました");
   }
 };
-
 function closeModal(){
   document.getElementById("clearModal").classList.add("hidden");
 }
 
+/* 紙吹雪 */
 function launchConfetti(){
   const c=document.getElementById("confetti");
   c.innerHTML="";
