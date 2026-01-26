@@ -51,7 +51,7 @@ body {
 }
 
 #board {
-  margin: 10px auto 20px;
+  margin: 10px auto;
   display: grid;
   gap: 6px;
   width: min(90vmin, 420px);
@@ -77,6 +77,17 @@ body {
   margin: 6px 0;
 }
 
+.ranking {
+  padding: 16px;
+  background: #fffaf5;
+}
+
+.ranking ul {
+  list-style: none;
+  padding: 0;
+  font-size: 0.9rem;
+}
+
 .modal {
   position: fixed;
   inset: 0;
@@ -94,23 +105,3 @@ body {
 }
 
 .hidden { display: none; }
-
-.share-footer {
-  padding: 16px;
-  background: #fffaf5;
-}
-
-.share-buttons {
-  display: flex;
-  justify-content: center;
-  gap: 10px;
-}
-
-.share-buttons button {
-  padding: 8px 14px;
-  border-radius: 999px;
-  border: none;
-  font-weight: 700;
-  background: #eee;
-  cursor: pointer;
-}

@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Merosura | sweet slide puzzle</title>
-  <meta name="description" content="チョコレート風デザインのスライドパズル。3×3〜10×10対応。無料で遊べる脳トレゲーム。">
+  <meta name="description" content="チョコレート風デザインのスライドパズル。3×3〜10×10。スマホはスワイプ操作対応。">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -39,40 +39,37 @@
   <div id="board"></div>
 </main>
 
-<!-- AFFILIATE（6×6以上で表示） -->
+<!-- AFFILIATE -->
 <div id="affiliate" class="affiliate hidden">
-  <!-- A8広告4つ：そのまま貼る -->
   <!-- ※本ページにはアフィリエイト広告が含まれています -->
+  <!-- A8広告4つをここにそのまま貼る -->
 </div>
 
-<!-- CLEAR -->
+<!-- RANKING -->
+<section class="ranking">
+  <h2>🏆 Ranking</h2>
+
+  <h3>Personal Best</h3>
+  <ul id="rank-personal"></ul>
+
+  <h3>World Best</h3>
+  <ul id="rank-world">
+    <li>world1 - 10s</li>
+    <li>world2 - 12s</li>
+    <li>world3 - 15s</li>
+  </ul>
+</section>
+
+<!-- CLEAR MODAL -->
 <div id="clearModal" class="modal hidden">
   <div class="modal-box">
     <h2>🍫 SWEET CLEAR!</h2>
     <p id="resultText"></p>
-
-    <h3>🏆 Your Best</h3>
-    <ul id="personalRank"></ul>
-
-    <h3>🌍 World Best (demo)</h3>
-    <ul id="worldRank"></ul>
-
     <button onclick="closeModal()">OK</button>
   </div>
 </div>
 
-<!-- SNS SHARE -->
-<footer class="share-footer">
-  <p>Share Merosura</p>
-  <div class="share-buttons">
-    <button onclick="shareX()">X</button>
-    <button onclick="shareLine()">LINE</button>
-    <button onclick="shareIG()">Instagram</button>
-    <button onclick="shareTikTok()">TikTok</button>
-  </div>
-</footer>
-
-<audio id="moveSound" src="move.mp3"></audio>
+<audio id="moveSound" src="move.mp3" preload="auto"></audio>
 <script src="app.js"></script>
 </body>
 </html>
