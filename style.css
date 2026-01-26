@@ -12,7 +12,10 @@ body {
   padding: 14px;
 }
 
-.hint { font-size: 14px; opacity: .7; }
+.hint {
+  font-size: 14px;
+  opacity: .7;
+}
 
 .rank-top-btn {
   position: absolute;
@@ -91,7 +94,10 @@ main {
   cursor: pointer;
 }
 
-.empty { background: transparent; cursor: default; }
+.empty {
+  background: transparent;
+  cursor: default;
+}
 
 .hidden { display: none; }
 
@@ -114,7 +120,8 @@ main {
 
 .modal-box {
   position: absolute;
-  left: 50%; top: 50%;
+  left: 50%;
+  top: 50%;
   transform: translate(-50%,-50%);
   width: min(94%, 460px);
   background: #fff;

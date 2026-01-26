@@ -74,72 +74,76 @@ function shuffleSolvable(){
 }
 
 function isSolvable(){
-  let inv=0;
-  for(let i=0;i<tiles.length;i++)
-    for(let j=i+1;j<tiles.length;j++)
+  let inv = 0;
+  for(let i=0;i<tiles.length;i++){
+    for(let j=i+1;j<tiles.length;j++){
       if(tiles[i] && tiles[j] && tiles[i] > tiles[j]) inv++;
-
+    }
+  }
   if(size % 2 === 1) return inv % 2 === 0;
   const rowFromBottom = size - Math.floor(tiles.indexOf(0)/size);
   return rowFromBottom % 2 === 0 ? inv % 2 === 1 : inv % 2 === 0;
 }
 
-/* 描画（PCクリック対応） */
+/* 描画（PCクリック） */
 function render(){
-  board.innerHTML="";
+  board.innerHTML = "";
   tiles.forEach((n,i)=>{
     const d = document.createElement("div");
     d.className = n===0 ? "tile empty" : "tile";
     d.textContent = n || "";
 
     if(n!==0){
-      d.addEventListener("click", ()=>{
-        if(playing) slideByIndex(i);
-      });
+      d.onclick = () => playing && slideByIndex(i);
     }
 
     board.appendChild(d);
   });
 }
 
-/* 核心ロジック：空白基準スライド */
-function slideByIndex(index){
-  let empty = tiles.indexOf(0);
-  const er = Math.floor(empty/size);
-  const ec = empty % size;
-  const tr = Math.floor(index/size);
-  const tc = index % size;
+/* ===== 核心：距離無制限・ごまかしゼロ ===== */
+function slideByIndex(targetIndex){
+  if (!playing) return;
 
-  if(er!==tr && ec!==tc) return;
+  let emptyIndex = tiles.indexOf(0);
 
-  let targets = [];
+  const er = Math.floor(emptyIndex / size);
+  const ec = emptyIndex % size;
+  const tr = Math.floor(targetIndex / size);
+  const tc = targetIndex % size;
 
-  if(er === tr){
+  if (er !== tr && ec !== tc) return;
+  if (targetIndex === emptyIndex) return;
+
+  const path = [];
+
+  if (er === tr) {
     const step = tc > ec ? 1 : -1;
-    for(let c = ec + step; c !== tc + step; c += step){
-      targets.push(er*size + c);
+    for (let c = ec + step; c !== tc + step; c += step) {
+      path.push(er * size + c);
     }
   } else {
     const step = tr > er ? 1 : -1;
-    for(let r = er + step; r !== tr + step; r += step){
-      targets.push(r*size + ec);
+    for (let r = er + step; r !== tr + step; r += step) {
+      path.push(r * size + ec);
     }
   }
 
-  targets.forEach(i=>{
+  let empty = emptyIndex;
+  for (const i of path) {
     tiles[empty] = tiles[i];
     tiles[i] = 0;
     empty = i;
-  });
+  }
 
   moveSound.currentTime = 0;
   moveSound.play();
   render();
 
-  if(tiles.slice(0,-1).every((v,i)=>v===i+1)) finish();
+  if (tiles.slice(0,-1).every((v,i)=>v===i+1)) finish();
 }
 
-/* スマホ：スワイプ → index に変換 */
+/* スマホ：スワイプ → index変換 */
 let sx=0, sy=0;
 
 board.addEventListener("touchstart", e=>{
@@ -153,24 +157,23 @@ board.addEventListener("touchend", e=>{
   const t = e.changedTouches[0];
   const dx = t.clientX - sx;
   const dy = t.clientY - sy;
-
   if(Math.abs(dx)<30 && Math.abs(dy)<30) return;
 
   const empty = tiles.indexOf(0);
   const er = Math.floor(empty/size);
   const ec = empty % size;
 
-  let index = null;
+  let target = null;
 
   if(Math.abs(dx) > Math.abs(dy)){
-    if(dx > 0 && ec > 0) index = er*size + (ec-1);
-    if(dx < 0 && ec < size-1) index = er*size + (ec+1);
+    if(dx > 0 && ec > 0) target = er*size + (size-1);
+    if(dx < 0 && ec < size-1) target = er*size;
   } else {
-    if(dy > 0 && er > 0) index = (er-1)*size + ec;
-    if(dy < 0 && er < size-1) index = (er+1)*size + ec;
+    if(dy > 0 && er > 0) target = (size-1)*size + ec;
+    if(dy < 0 && er < size-1) target = ec;
   }
 
-  if(index !== null) slideByIndex(index);
+  if(target !== null) slideByIndex(target);
 });
 
 /* ランキング（ローカル） */
@@ -212,7 +215,7 @@ function finish(){
   launchConfetti();
 }
 
-/* クリア操作 */
+/* 操作 */
 document.getElementById("retryBtn").onclick = ()=>{ closeModal(); startGame(); };
 document.getElementById("okBtn").onclick = closeModal;
 document.getElementById("shareBtn").onclick = async()=>{
