@@ -12,10 +12,12 @@ const rankList = document.getElementById("rankList");
 let size = 3, tiles = [], playing = false;
 let startTime, timer;
 
-/* 名前必須 */
-nameInput.addEventListener("input", () => {
-  startBtn.disabled = nameInput.value.trim() === "";
-});
+/* 名前復元 */
+const savedName = localStorage.getItem("merosura_name");
+if (savedName) nameInput.value = savedName;
+
+/* スクロール防止 */
+board.addEventListener("touchmove", e => e.preventDefault(), { passive:false });
 
 /* ランキング */
 rankingBtn.onclick = () => {
@@ -24,7 +26,7 @@ rankingBtn.onclick = () => {
 };
 closeRankingBtn.onclick = () => rankingScreen.classList.add("hidden");
 
-/* サイズ */
+/* サイズ変更 */
 document.querySelectorAll(".sizes button").forEach(btn=>{
   btn.onclick=()=>{
     size=+btn.dataset.size;
@@ -34,7 +36,11 @@ document.querySelectorAll(".sizes button").forEach(btn=>{
   };
 });
 
-startBtn.onclick=()=>!playing&&startGame();
+startBtn.onclick=()=>{
+  const name=nameInput.value.trim()||"user";
+  localStorage.setItem("merosura_name",name);
+  if(!playing) startGame();
+};
 
 function init(){
   playing=false;
@@ -61,6 +67,7 @@ function startGame(){
 function shuffleSolvable(){
   do{ tiles.sort(()=>Math.random()-0.5); }while(!isSolvable());
 }
+
 function isSolvable(){
   let inv=0;
   for(let i=0;i<tiles.length;i++)
@@ -90,13 +97,14 @@ function move(i){
   const er=Math.floor(e/size),ec=e%size;
   if(fr===er||fc===ec){
     [tiles[i],tiles[e]]=[tiles[e],tiles[i]];
-    moveSound.currentTime=0; moveSound.play();
+    moveSound.currentTime=0;
+    moveSound.play();
     render();
     if(tiles.slice(0,-1).every((v,i)=>v===i+1)) finish();
   }
 }
 
-/* ランキング保存 */
+/* ランキング */
 function saveRecord(name,time){
   const key=`rank_${size}`;
   const list=JSON.parse(localStorage.getItem(key)||"[]");
@@ -120,7 +128,7 @@ function finish(){
   playing=false;
   clearInterval(timer);
   const time=Math.floor((Date.now()-startTime)/1000);
-  const name=nameInput.value;
+  const name=nameInput.value.trim()||"user";
   const rank=saveRecord(name,time);
 
   document.getElementById("clearBadge").textContent=
@@ -145,6 +153,7 @@ document.getElementById("shareBtn").onclick=async()=>{
     alert("URLをコピーしました");
   }
 };
+
 function closeModal(){
   document.getElementById("clearModal").classList.add("hidden");
 }

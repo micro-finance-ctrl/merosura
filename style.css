@@ -7,9 +7,9 @@ body {
   text-align: center;
 }
 
-.header {
+header {
   position: relative;
-  padding: 12px;
+  padding: 14px;
 }
 
 .hint { font-size: 14px; opacity: .7; }
@@ -25,6 +25,8 @@ body {
   color: #fff;
   font-size: 18px;
 }
+
+.controls { padding: 10px; }
 
 .name-start {
   display: flex;
@@ -48,7 +50,6 @@ body {
   color: #fff;
   font-weight: 900;
 }
-.name-start button:disabled { opacity: .4; }
 
 .sizes button {
   margin: 3px;
@@ -60,15 +61,22 @@ body {
 }
 .sizes .active { background: #ccc; }
 
+main {
+  display: flex;
+  justify-content: center;
+}
+
 #board {
-  margin: 14px auto;
+  margin: 24px auto;
   display: grid;
   gap: 6px;
   width: min(90vmin, 420px);
+  max-width: 420px;
   padding: 8px;
   background: #3e2a21;
   border-radius: 18px;
   box-shadow: inset 0 0 0 4px #2b1b14;
+  touch-action: none;
 }
 
 .tile {
@@ -81,6 +89,7 @@ body {
   align-items: center;
   justify-content: center;
 }
+
 .empty { background: transparent; }
 
 .hidden { display: none; }
@@ -101,6 +110,7 @@ body {
   background: rgba(0,0,0,.6);
   z-index: 10000;
 }
+
 .modal-box {
   position: absolute;
   left: 50%; top: 50%;
@@ -116,6 +126,7 @@ body {
   gap: 12px;
   justify-content: center;
 }
+
 .clear-buttons button {
   padding: 14px 26px;
   font-size: 18px;
@@ -133,6 +144,7 @@ body {
   inset: 0;
   z-index: 20000;
 }
+
 .confetti-piece {
   position: absolute;
   width: 8px;
@@ -140,6 +152,7 @@ body {
   background: hsl(var(--hue),80%,60%);
   animation: fall 1.8s linear forwards;
 }
+
 @keyframes fall {
   from { transform: translateY(-20px); }
   to { transform: translateY(110vh); }
