@@ -36,22 +36,15 @@
   <div id="board"></div>
 </main>
 
-<!-- ===== 広告（CTR最適化） ===== -->
+<!-- 広告 -->
 <div id="affiliate" class="affiliate hidden">
   <div class="ad-label">🎁 プレイヤーに人気</div>
-
-  <div class="ad-card">
-    <!-- A8広告① -->
-  </div>
-
-  <div class="ad-card">
-    <!-- A8広告② -->
-  </div>
+  <div class="ad-card"><!-- A8広告 --></div>
 </div>
 
 <button id="openRanking">🏆 ランキング</button>
 
-<!-- ===== ランキング画面 ===== -->
+<!-- ランキング -->
 <div id="rankingScreen" class="hidden">
   <div class="rank-tabs">
     <button id="worldBtn">🌍 世界</button>
@@ -61,7 +54,7 @@
   <button id="closeRanking">戻る</button>
 </div>
 
-<!-- ===== クリアモーダル ===== -->
+<!-- クリアモーダル -->
 <div id="clearModal" class="modal hidden">
   <div class="modal-box">
     <div id="clearRankIcon" class="rank-icon"></div>
@@ -71,12 +64,11 @@
     <div class="clear-buttons">
       <button id="retryBtn">もう一回</button>
       <button id="shareBtn">Share</button>
-      <button onclick="closeModal()">OK</button>
+      <button id="okBtn">OK</button>
     </div>
   </div>
 </div>
 
-<!-- 紙吹雪 -->
 <div id="confetti"></div>
 
 <audio id="moveSound" src="move.mp3" preload="auto"></audio>
