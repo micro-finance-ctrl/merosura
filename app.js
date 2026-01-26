@@ -1,43 +1,49 @@
 const board = document.getElementById("board");
-const movesEl = document.getElementById("moves");
 const timeEl = document.getElementById("time");
 const affiliate = document.getElementById("affiliate");
+const nameInput = document.getElementById("playerName");
+const startBtn = document.getElementById("startBtn");
 
-let size = 4;
+let size = 3;
 let tiles = [];
-let moves = 0;
-let startTime = 0;
-let timer;
+let startTime = null;
+let timer = null;
+let playing = false;
 
-const badges = {
-  5: "🍫 Sweet Solver",
-  7: "🔥 Bitter Challenger",
-  10: "👑 Cocoa Master"
-};
+/* 初期表示 */
+initBoard();
 
+/* サイズ選択 */
 document.querySelectorAll(".sizes button").forEach(btn => {
-  btn.onclick = () => start(Number(btn.dataset.size));
+  btn.onclick = () => {
+    size = Number(btn.dataset.size);
+    document.querySelectorAll(".sizes button").forEach(b=>b.classList.remove("active"));
+    btn.classList.add("active");
+    initBoard();
+  };
 });
 
-start(size);
+/* START */
+startBtn.onclick = () => {
+  if (!playing) startGame();
+};
 
-function start(n) {
-  size = n;
-  moves = 0;
-  movesEl.textContent = "moves: 0";
-  startTime = Date.now();
-
+function initBoard() {
+  playing = false;
   clearInterval(timer);
-  timer = setInterval(updateTime, 1000);
-
+  timeEl.textContent = "time: --:--";
   tiles = [...Array(size * size).keys()];
-  shuffleSolvable();
-
   board.style.gridTemplateColumns = `repeat(${size},1fr)`;
-  board.style.setProperty("--size", size);
-
   render();
   affiliate.classList.toggle("hidden", size <= 5);
+}
+
+function startGame() {
+  playing = true;
+  shuffle();
+  startTime = Date.now();
+  timer = setInterval(updateTime, 1000);
+  render();
 }
 
 function updateTime() {
@@ -45,37 +51,20 @@ function updateTime() {
   timeEl.textContent = `time: ${Math.floor(t/60)}:${String(t%60).padStart(2,"0")}`;
 }
 
-function shuffleSolvable() {
-  do {
-    for (let i = tiles.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [tiles[i], tiles[j]] = [tiles[j], tiles[i]];
-    }
-  } while (!isSolvable());
-}
-
-function isSolvable() {
-  let inv = 0;
-  for (let i = 0; i < tiles.length; i++) {
-    for (let j = i + 1; j < tiles.length; j++) {
-      if (tiles[i] && tiles[j] && tiles[i] > tiles[j]) inv++;
-    }
+function shuffle() {
+  for (let i = tiles.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [tiles[i], tiles[j]] = [tiles[j], tiles[i]];
   }
-  if (size % 2) return inv % 2 === 0;
-  const row = size - Math.floor(tiles.indexOf(0) / size);
-  return (row % 2 === 0) !== (inv % 2 === 0);
 }
 
 function render() {
   board.innerHTML = "";
   tiles.forEach((n,i)=>{
     const d=document.createElement("div");
-    if(n===0){d.className="tile empty";}
-    else{
-      d.className="tile";
-      d.textContent=n;
-      d.onclick=()=>move(i);
-    }
+    d.className=n===0?"tile empty":"tile";
+    d.textContent=n||"";
+    d.onclick=()=>playing && move(i);
     board.appendChild(d);
   });
 }
@@ -85,61 +74,27 @@ function move(i) {
   const ok=Math.abs(i%size-e%size)+Math.abs(Math.floor(i/size)-Math.floor(e/size))===1;
   if(!ok)return;
   [tiles[i],tiles[e]]=[tiles[e],tiles[i]];
-  moves++;
-  movesEl.textContent=`moves: ${moves}`;
-  playMoveSound();
+  document.getElementById("moveSound").play();
   render();
-  if(isCleared()) showClear();
+  if(tiles.slice(0,-1).every((v,i)=>v===i+1)) finish();
 }
 
-function isCleared(){
-  return tiles.slice(0,-1).every((v,i)=>v===i+1);
-}
-
-function showClear(){
+function finish() {
+  playing=false;
   clearInterval(timer);
-
-  document.getElementById("shareSize").textContent = `${size}×${size} CLEARED`;
-  document.getElementById("shareTime").textContent = timeEl.textContent;
-  document.getElementById("shareMoves").textContent = `moves: ${moves}`;
-
-  let b="";
-  if(badges[size]){
-    localStorage.setItem(`badge_${size}`,"true");
-    b=`badge unlocked: ${badges[size]}`;
-  }
-  document.getElementById("clearBadge").textContent=b;
+  const t=Math.floor((Date.now()-startTime)/1000);
+  const name=nameInput.value||"no-name";
+  document.getElementById("resultText").textContent=`${name} : ${t}s (${size}×${size})`;
   document.getElementById("clearModal").classList.remove("hidden");
 }
 
+/* SNS SHARE */
+const url=location.href;
+function shareX(){window.open(`https://twitter.com/intent/tweet?text=Merosuraで遊んでみて🍫&url=${url}`);}
+function shareLine(){window.open(`https://social-plugins.line.me/lineit/share?url=${url}`);}
+function shareIG(){alert("Instagramは画像投稿がおすすめ！スクショしてシェアしてね📸");}
+function shareTikTok(){alert("TikTokで #Merosura を付けて紹介してね🎵");}
+
 function closeModal(){
   document.getElementById("clearModal").classList.add("hidden");
-}
-
-function playMoveSound(){
-  const s=document.getElementById("moveSound");
-  s.volume=0.25;
-  s.currentTime=0;
-  s.play();
-}
-
-function shareImage(){
-  const card=document.getElementById("shareCard");
-  html2canvas(card,{scale:2}).then(c=>{
-    c.toBlob(b=>{
-      const f=new File([b],"merosura.png",{type:"image/png"});
-      if(navigator.share && navigator.canShare({files:[f]})){
-        navigator.share({
-          files:[f],
-          text:`I cleared ${size}×${size} in Merosura 🍫`,
-          title:"Merosura"
-        });
-      }else{
-        const a=document.createElement("a");
-        a.href=URL.createObjectURL(b);
-        a.download="merosura.png";
-        a.click();
-      }
-    });
-  });
 }

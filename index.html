@@ -1,9 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ja">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Merosura | sweet slide puzzle</title>
+  <meta name="description" content="チョコレート風デザインのスライドパズル。3×3〜10×10対応。無料で遊べる脳トレゲーム。">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -14,8 +15,10 @@
 </header>
 
 <section class="controls">
+  <input id="playerName" maxlength="15" placeholder="名前（15文字まで）">
+
   <div class="sizes">
-    <button data-size="3">3×3</button>
+    <button data-size="3" class="active">3×3</button>
     <button data-size="4">4×4</button>
     <button data-size="5">5×5</button>
     <button data-size="6">6×6</button>
@@ -24,9 +27,11 @@
     <button data-size="9">9×9</button>
     <button data-size="10">10×10</button>
   </div>
+
+  <button id="startBtn">START</button>
+
   <div class="status">
-    <span id="moves">moves: 0</span>
-    <span id="time">time: 0:00</span>
+    <span id="time">time: --:--</span>
   </div>
 </section>
 
@@ -34,40 +39,40 @@
   <div id="board"></div>
 </main>
 
+<!-- AFFILIATE -->
 <div id="affiliate" class="affiliate hidden">
-  <p class="aff-title">🍫 break time</p>
-  <p class="aff-text">
-    スマホだけで使える<br>
-    今どきのデビットカード
-  </p>
-  <a href="#" target="_blank">check →</a>
+  <!-- A8広告4つ（そのまま） -->
+  <!-- ※前回決めたコードをここにそのまま貼る -->
 </div>
 
-<!-- CLEAR MODAL -->
+<!-- CLEAR -->
 <div id="clearModal" class="modal hidden">
   <div class="modal-box">
     <h2>🍫 SWEET CLEAR!</h2>
+    <p id="resultText"></p>
 
-    <!-- share card -->
-    <div id="shareCard" class="share-card">
-      <h3 class="share-title">Merosura</h3>
-      <p id="shareSize"></p>
-      <p id="shareTime"></p>
-      <p id="shareMoves"></p>
-    </div>
+    <h3>🏆 Your Best</h3>
+    <ul id="personalRank"></ul>
 
-    <p id="clearBadge"></p>
+    <h3>🌍 World Best (demo)</h3>
+    <ul id="worldRank"></ul>
 
-    <div class="modal-buttons">
-      <button onclick="shareImage()">Share 📱</button>
-      <button onclick="closeModal()">OK</button>
-    </div>
+    <button onclick="closeModal()">OK</button>
   </div>
 </div>
 
-<audio id="moveSound" src="move.mp3"></audio>
+<!-- SNS SHARE -->
+<footer class="share-footer">
+  <p>Share Merosura</p>
+  <div class="share-buttons">
+    <button onclick="shareX()">X</button>
+    <button onclick="shareLine()">LINE</button>
+    <button onclick="shareIG()">Instagram</button>
+    <button onclick="shareTikTok()">TikTok</button>
+  </div>
+</footer>
 
-<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+<audio id="moveSound" src="move.mp3"></audio>
 <script src="app.js"></script>
 </body>
 </html>
