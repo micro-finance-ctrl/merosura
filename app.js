@@ -2,8 +2,12 @@ const board = document.getElementById("board");
 const startBtn = document.getElementById("startBtn");
 const nameInput = document.getElementById("playerName");
 const timeEl = document.getElementById("time");
-const affiliate = document.getElementById("affiliate");
 const moveSound = document.getElementById("moveSound");
+
+const rankingBtn = document.getElementById("openRanking");
+const rankingScreen = document.getElementById("rankingScreen");
+const closeRankingBtn = document.getElementById("closeRanking");
+const rankList = document.getElementById("rankList");
 
 let size = 3, tiles = [], playing = false;
 let startTime, timer;
@@ -12,6 +16,13 @@ let startTime, timer;
 nameInput.addEventListener("input", () => {
   startBtn.disabled = nameInput.value.trim() === "";
 });
+
+/* ランキング */
+rankingBtn.onclick = () => {
+  loadRanking();
+  rankingScreen.classList.remove("hidden");
+};
+closeRankingBtn.onclick = () => rankingScreen.classList.add("hidden");
 
 /* サイズ */
 document.querySelectorAll(".sizes button").forEach(btn=>{
@@ -25,15 +36,12 @@ document.querySelectorAll(".sizes button").forEach(btn=>{
 
 startBtn.onclick=()=>!playing&&startGame();
 
-/* 初期化 */
 function init(){
   playing=false;
   clearInterval(timer);
   timeEl.textContent="time: --";
   tiles=[...Array(size*size).keys()];
   board.style.gridTemplateColumns=`repeat(${size},1fr)`;
-  affiliate.classList.add("hidden");
-  affiliate.classList.remove("show");
   render();
 }
 init();
@@ -46,10 +54,6 @@ function startGame(){
   timer=setInterval(()=>{
     timeEl.textContent=`time: ${Math.floor((Date.now()-startTime)/1000)}s`;
   },1000);
-  if(size>=4){
-    affiliate.classList.remove("hidden");
-    setTimeout(()=>affiliate.classList.add("show"),800);
-  }
   render();
 }
 
@@ -79,7 +83,7 @@ function render(){
   });
 }
 
-/* 移動（基本） */
+/* 移動 */
 function move(i){
   const e=tiles.indexOf(0);
   const fr=Math.floor(i/size),fc=i%size;
@@ -92,16 +96,40 @@ function move(i){
   }
 }
 
+/* ランキング保存 */
+function saveRecord(name,time){
+  const key=`rank_${size}`;
+  const list=JSON.parse(localStorage.getItem(key)||"[]");
+  list.push({name,time});
+  list.sort((a,b)=>a.time-b.time);
+  localStorage.setItem(key,JSON.stringify(list.slice(0,20)));
+  return list.findIndex(r=>r.name===name&&r.time===time)+1;
+}
+
+function loadRanking(){
+  const key=`rank_${size}`;
+  const list=JSON.parse(localStorage.getItem(key)||"[]");
+  rankList.innerHTML="";
+  list.forEach((r,i)=>{
+    rankList.innerHTML+=`<li>${i+1}. ${r.name} - ${r.time}s</li>`;
+  });
+}
+
 /* クリア */
 function finish(){
   playing=false;
   clearInterval(timer);
   const time=Math.floor((Date.now()-startTime)/1000);
+  const name=nameInput.value;
+  const rank=saveRecord(name,time);
+
+  document.getElementById("clearBadge").textContent=
+    rank===1 ? "🎉 自己ベスト更新！" : "";
   document.getElementById("clearMainResult").textContent=
-    `${nameInput.value} - ${time}s`;
-  document.getElementById("clearBadge").textContent="🎉 自己ベスト！";
-  document.getElementById("selfRankText").textContent="👤 自己ランキング：1位";
-  document.getElementById("worldRankText").textContent="🌍 世界ランキング：1位";
+    `${name} - ${time}s`;
+  document.getElementById("selfRankText").textContent=
+    `この端末での順位：${rank}位`;
+
   document.getElementById("clearModal").classList.remove("hidden");
   launchConfetti();
 }
