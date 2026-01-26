@@ -7,27 +7,8 @@ body {
   text-align: center;
 }
 
-.header {
-  position: relative;
-  padding: 14px;
-}
-
-.hint {
-  font-size: 14px;
-  opacity: .7;
-}
-
-.rank-top-btn {
-  position: absolute;
-  top: 12px;
-  right: 12px;
-  padding: 10px 14px;
-  border-radius: 999px;
-  border: none;
-  background: #5a3a2e;
-  color: #fff;
-  font-size: 18px;
-}
+.header { padding: 14px; }
+.hint { font-size: 14px; opacity: .7; }
 
 .controls { padding: 10px; }
 
@@ -65,6 +46,7 @@ body {
 .sizes .active { background: #ccc; }
 
 main {
+  position: relative;
   display: flex;
   justify-content: center;
 }
@@ -79,7 +61,7 @@ main {
   background: #3e2a21;
   border-radius: 18px;
   box-shadow: inset 0 0 0 4px #2b1b14;
-  touch-action: none;
+  touch-action: none; /* スクロール防止 */
 }
 
 .tile {
@@ -93,21 +75,39 @@ main {
   justify-content: center;
   cursor: pointer;
 }
-
-.empty {
-  background: transparent;
-  cursor: default;
-}
+.empty { background: transparent; cursor: default; }
 
 .hidden { display: none; }
 
-/* ランキング */
-#rankingScreen {
-  position: fixed;
+/* START前の理由ヒント（1秒表示） */
+.tap-hint {
+  position: absolute;
   inset: 0;
-  background: #fffaf5;
-  padding: 20px;
-  z-index: 9000;
+  margin: 24px auto;
+  width: min(90vmin, 420px);
+  max-width: 420px;
+  border-radius: 18px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+
+  font-weight: 900;
+  font-size: 18px;
+  line-height: 1.4;
+  color: #fff;
+
+  background: rgba(0,0,0,.45);
+  pointer-events: none;
+  animation: fadeHint 1s forwards;
+}
+
+@keyframes fadeHint {
+  0% { opacity: 0; }
+  10% { opacity: 1; }
+  80% { opacity: 1; }
+  100% { opacity: 0; }
 }
 
 /* クリア */
@@ -117,24 +117,20 @@ main {
   background: rgba(0,0,0,.6);
   z-index: 10000;
 }
-
 .modal-box {
   position: absolute;
-  left: 50%;
-  top: 50%;
+  left: 50%; top: 50%;
   transform: translate(-50%,-50%);
   width: min(94%, 460px);
   background: #fff;
   padding: 36px 24px;
   border-radius: 20px;
 }
-
 .clear-buttons {
   display: flex;
   gap: 12px;
   justify-content: center;
 }
-
 .clear-buttons button {
   padding: 14px 26px;
   font-size: 18px;
@@ -152,7 +148,6 @@ main {
   inset: 0;
   z-index: 20000;
 }
-
 .confetti-piece {
   position: absolute;
   width: 8px;
@@ -160,7 +155,6 @@ main {
   background: hsl(var(--hue),80%,60%);
   animation: fall 1.8s linear forwards;
 }
-
 @keyframes fall {
   from { transform: translateY(-20px); }
   to { transform: translateY(110vh); }

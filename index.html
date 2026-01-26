@@ -11,7 +11,6 @@
 
 <header class="header">
   <h1>Merosura</h1>
-  <button id="openRanking" class="rank-top-btn">🏆</button>
   <p class="hint">空白に向かってスライド</p>
 </header>
 
@@ -36,15 +35,14 @@
 </section>
 
 <main>
+  <!-- START前タップ時の理由表示 -->
+  <div id="tapHint" class="tap-hint hidden">
+    🔒 まだ始まってないよ<br>
+    STARTを押してね
+  </div>
+
   <div id="board"></div>
 </main>
-
-<!-- ランキング -->
-<div id="rankingScreen" class="hidden">
-  <h2>🏆 この端末でのベスト</h2>
-  <ul id="rankList"></ul>
-  <button id="closeRanking">戻る</button>
-</div>
 
 <!-- クリア -->
 <div id="clearModal" class="modal hidden">

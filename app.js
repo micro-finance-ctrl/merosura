@@ -3,11 +3,7 @@ const startBtn = document.getElementById("startBtn");
 const nameInput = document.getElementById("playerName");
 const timeEl = document.getElementById("time");
 const moveSound = document.getElementById("moveSound");
-
-const rankingBtn = document.getElementById("openRanking");
-const rankingScreen = document.getElementById("rankingScreen");
-const closeRankingBtn = document.getElementById("closeRanking");
-const rankList = document.getElementById("rankList");
+const tapHint = document.getElementById("tapHint");
 
 let size = 3;
 let tiles = [];
@@ -21,16 +17,9 @@ if (savedName) nameInput.value = savedName;
 /* スクロール防止 */
 board.addEventListener("touchmove", e => e.preventDefault(), { passive:false });
 
-/* ランキング */
-rankingBtn.onclick = () => {
-  loadRanking();
-  rankingScreen.classList.remove("hidden");
-};
-closeRankingBtn.onclick = () => rankingScreen.classList.add("hidden");
-
 /* サイズ変更 */
 document.querySelectorAll(".sizes button").forEach(btn=>{
-  btn.onclick=()=>{
+  btn.onclick = ()=>{
     size = +btn.dataset.size;
     document.querySelectorAll(".sizes button").forEach(b=>b.classList.remove("active"));
     btn.classList.add("active");
@@ -38,7 +27,8 @@ document.querySelectorAll(".sizes button").forEach(btn=>{
   };
 });
 
-startBtn.onclick = () => {
+/* START */
+startBtn.onclick = ()=>{
   const name = nameInput.value.trim() || "user";
   localStorage.setItem("merosura_name", name);
   if (!playing) startGame();
@@ -55,8 +45,11 @@ function init(){
 }
 init();
 
-/* スタート */
+/* 開始 */
 function startGame(){
+  // START後はヒントを完全無効化
+  if (tapHint) tapHint.remove();
+
   playing = true;
   shuffleSolvable();
   startTime = Date.now();
@@ -66,13 +59,10 @@ function startGame(){
   render();
 }
 
-/* シャッフル（必ず解ける） */
+/* 必ず解けるシャッフル */
 function shuffleSolvable(){
-  do {
-    tiles.sort(()=>Math.random()-0.5);
-  } while(!isSolvable());
+  do { tiles.sort(()=>Math.random()-0.5); } while(!isSolvable());
 }
-
 function isSolvable(){
   let inv = 0;
   for(let i=0;i<tiles.length;i++){
@@ -93,20 +83,32 @@ function render(){
     d.className = n===0 ? "tile empty" : "tile";
     d.textContent = n || "";
 
-    if(n!==0){
-      d.onclick = () => playing && slideByIndex(i);
+    if(n !== 0){
+      d.onclick = ()=>{
+        if (!playing) {
+          showTapHint();
+          return;
+        }
+        slideByIndex(i);
+      };
     }
 
     board.appendChild(d);
   });
 }
 
-/* ===== 核心：距離無制限・ごまかしゼロ ===== */
+/* ④ 行動で理解させるヒント */
+function showTapHint(){
+  if (!tapHint || !tapHint.classList.contains("hidden")) return;
+  tapHint.classList.remove("hidden");
+  setTimeout(()=> tapHint.classList.add("hidden"), 1000);
+}
+
+/* ===== 距離無制限・ごまかしゼロ ===== */
 function slideByIndex(targetIndex){
   if (!playing) return;
 
   let emptyIndex = tiles.indexOf(0);
-
   const er = Math.floor(emptyIndex / size);
   const ec = emptyIndex % size;
   const tr = Math.floor(targetIndex / size);
@@ -116,7 +118,6 @@ function slideByIndex(targetIndex){
   if (targetIndex === emptyIndex) return;
 
   const path = [];
-
   if (er === tr) {
     const step = tc > ec ? 1 : -1;
     for (let c = ec + step; c !== tc + step; c += step) {
@@ -143,15 +144,12 @@ function slideByIndex(targetIndex){
   if (tiles.slice(0,-1).every((v,i)=>v===i+1)) finish();
 }
 
-/* スマホ：スワイプ → index変換 */
+/* スマホ：スワイプ → 端まで指定 */
 let sx=0, sy=0;
-
 board.addEventListener("touchstart", e=>{
   const t = e.touches[0];
-  sx = t.clientX;
-  sy = t.clientY;
+  sx = t.clientX; sy = t.clientY;
 });
-
 board.addEventListener("touchend", e=>{
   if(!playing) return;
   const t = e.changedTouches[0];
@@ -164,7 +162,6 @@ board.addEventListener("touchend", e=>{
   const ec = empty % size;
 
   let target = null;
-
   if(Math.abs(dx) > Math.abs(dy)){
     if(dx > 0 && ec > 0) target = er*size + (size-1);
     if(dx < 0 && ec < size-1) target = er*size;
@@ -172,28 +169,8 @@ board.addEventListener("touchend", e=>{
     if(dy > 0 && er > 0) target = (size-1)*size + ec;
     if(dy < 0 && er < size-1) target = ec;
   }
-
   if(target !== null) slideByIndex(target);
 });
-
-/* ランキング（ローカル） */
-function saveRecord(name,time){
-  const key = `rank_${size}`;
-  const list = JSON.parse(localStorage.getItem(key)||"[]");
-  list.push({name,time});
-  list.sort((a,b)=>a.time-b.time);
-  localStorage.setItem(key,JSON.stringify(list.slice(0,20)));
-  return list.findIndex(r=>r.name===name && r.time===time)+1;
-}
-
-function loadRanking(){
-  const key = `rank_${size}`;
-  const list = JSON.parse(localStorage.getItem(key)||"[]");
-  rankList.innerHTML="";
-  list.forEach((r,i)=>{
-    rankList.innerHTML += `<li>${i+1}. ${r.name} - ${r.time}s</li>`;
-  });
-}
 
 /* クリア */
 function finish(){
@@ -202,20 +179,16 @@ function finish(){
 
   const time = Math.floor((Date.now()-startTime)/1000);
   const name = nameInput.value.trim() || "user";
-  const rank = saveRecord(name,time);
 
-  document.getElementById("clearBadge").textContent =
-    rank===1 ? "🎉 自己ベスト更新！" : "";
-  document.getElementById("clearMainResult").textContent =
-    `${name} - ${time}s`;
-  document.getElementById("selfRankText").textContent =
-    `この端末での順位：${rank}位`;
+  document.getElementById("clearBadge").textContent = "";
+  document.getElementById("clearMainResult").textContent = `${name} - ${time}s`;
+  document.getElementById("selfRankText").textContent = "";
 
   document.getElementById("clearModal").classList.remove("hidden");
   launchConfetti();
 }
 
-/* 操作 */
+/* クリア操作 */
 document.getElementById("retryBtn").onclick = ()=>{ closeModal(); startGame(); };
 document.getElementById("okBtn").onclick = closeModal;
 document.getElementById("shareBtn").onclick = async()=>{
@@ -226,7 +199,6 @@ document.getElementById("shareBtn").onclick = async()=>{
     alert("URLをコピーしました");
   }
 };
-
 function closeModal(){
   document.getElementById("clearModal").classList.add("hidden");
 }
