@@ -9,7 +9,9 @@ const rankingScreen = document.getElementById("rankingScreen");
 const closeRankingBtn = document.getElementById("closeRanking");
 const rankList = document.getElementById("rankList");
 
-let size = 3, tiles = [], playing = false;
+let size = 3;
+let tiles = [];
+let playing = false;
 let startTime, timer;
 
 /* 名前復元 */
@@ -29,97 +31,164 @@ closeRankingBtn.onclick = () => rankingScreen.classList.add("hidden");
 /* サイズ変更 */
 document.querySelectorAll(".sizes button").forEach(btn=>{
   btn.onclick=()=>{
-    size=+btn.dataset.size;
+    size = +btn.dataset.size;
     document.querySelectorAll(".sizes button").forEach(b=>b.classList.remove("active"));
     btn.classList.add("active");
     init();
   };
 });
 
-startBtn.onclick=()=>{
-  const name=nameInput.value.trim()||"user";
-  localStorage.setItem("merosura_name",name);
-  if(!playing) startGame();
+startBtn.onclick = () => {
+  const name = nameInput.value.trim() || "user";
+  localStorage.setItem("merosura_name", name);
+  if (!playing) startGame();
 };
 
+/* 初期化 */
 function init(){
-  playing=false;
+  playing = false;
   clearInterval(timer);
-  timeEl.textContent="time: --";
-  tiles=[...Array(size*size).keys()];
-  board.style.gridTemplateColumns=`repeat(${size},1fr)`;
+  timeEl.textContent = "time: --";
+  tiles = [...Array(size*size).keys()];
+  board.style.gridTemplateColumns = `repeat(${size},1fr)`;
   render();
 }
 init();
 
 /* スタート */
 function startGame(){
-  playing=true;
+  playing = true;
   shuffleSolvable();
-  startTime=Date.now();
-  timer=setInterval(()=>{
-    timeEl.textContent=`time: ${Math.floor((Date.now()-startTime)/1000)}s`;
+  startTime = Date.now();
+  timer = setInterval(()=>{
+    timeEl.textContent = `time: ${Math.floor((Date.now()-startTime)/1000)}s`;
   },1000);
   render();
 }
 
-/* シャッフル */
+/* シャッフル（必ず解ける） */
 function shuffleSolvable(){
-  do{ tiles.sort(()=>Math.random()-0.5); }while(!isSolvable());
+  do {
+    tiles.sort(()=>Math.random()-0.5);
+  } while(!isSolvable());
 }
 
 function isSolvable(){
   let inv=0;
   for(let i=0;i<tiles.length;i++)
     for(let j=i+1;j<tiles.length;j++)
-      if(tiles[i]&&tiles[j]&&tiles[i]>tiles[j]) inv++;
-  if(size%2===1) return inv%2===0;
-  const row=size-Math.floor(tiles.indexOf(0)/size);
-  return row%2===0?inv%2===1:inv%2===0;
+      if(tiles[i] && tiles[j] && tiles[i] > tiles[j]) inv++;
+
+  if(size % 2 === 1) return inv % 2 === 0;
+  const rowFromBottom = size - Math.floor(tiles.indexOf(0)/size);
+  return rowFromBottom % 2 === 0 ? inv % 2 === 1 : inv % 2 === 0;
 }
 
-/* 描画 */
+/* 描画（PCクリック対応） */
 function render(){
   board.innerHTML="";
   tiles.forEach((n,i)=>{
-    const d=document.createElement("div");
-    d.className=n===0?"tile empty":"tile";
-    d.textContent=n||"";
-    d.onclick=()=>playing&&move(i);
+    const d = document.createElement("div");
+    d.className = n===0 ? "tile empty" : "tile";
+    d.textContent = n || "";
+
+    if(n!==0){
+      d.addEventListener("click", ()=>{
+        if(playing) slideByIndex(i);
+      });
+    }
+
     board.appendChild(d);
   });
 }
 
-/* 移動 */
-function move(i){
-  const e=tiles.indexOf(0);
-  const fr=Math.floor(i/size),fc=i%size;
-  const er=Math.floor(e/size),ec=e%size;
-  if(fr===er||fc===ec){
-    [tiles[i],tiles[e]]=[tiles[e],tiles[i]];
-    moveSound.currentTime=0;
-    moveSound.play();
-    render();
-    if(tiles.slice(0,-1).every((v,i)=>v===i+1)) finish();
+/* 核心ロジック：空白基準スライド */
+function slideByIndex(index){
+  let empty = tiles.indexOf(0);
+  const er = Math.floor(empty/size);
+  const ec = empty % size;
+  const tr = Math.floor(index/size);
+  const tc = index % size;
+
+  if(er!==tr && ec!==tc) return;
+
+  let targets = [];
+
+  if(er === tr){
+    const step = tc > ec ? 1 : -1;
+    for(let c = ec + step; c !== tc + step; c += step){
+      targets.push(er*size + c);
+    }
+  } else {
+    const step = tr > er ? 1 : -1;
+    for(let r = er + step; r !== tr + step; r += step){
+      targets.push(r*size + ec);
+    }
   }
+
+  targets.forEach(i=>{
+    tiles[empty] = tiles[i];
+    tiles[i] = 0;
+    empty = i;
+  });
+
+  moveSound.currentTime = 0;
+  moveSound.play();
+  render();
+
+  if(tiles.slice(0,-1).every((v,i)=>v===i+1)) finish();
 }
 
-/* ランキング */
+/* スマホ：スワイプ → index に変換 */
+let sx=0, sy=0;
+
+board.addEventListener("touchstart", e=>{
+  const t = e.touches[0];
+  sx = t.clientX;
+  sy = t.clientY;
+});
+
+board.addEventListener("touchend", e=>{
+  if(!playing) return;
+  const t = e.changedTouches[0];
+  const dx = t.clientX - sx;
+  const dy = t.clientY - sy;
+
+  if(Math.abs(dx)<30 && Math.abs(dy)<30) return;
+
+  const empty = tiles.indexOf(0);
+  const er = Math.floor(empty/size);
+  const ec = empty % size;
+
+  let index = null;
+
+  if(Math.abs(dx) > Math.abs(dy)){
+    if(dx > 0 && ec > 0) index = er*size + (ec-1);
+    if(dx < 0 && ec < size-1) index = er*size + (ec+1);
+  } else {
+    if(dy > 0 && er > 0) index = (er-1)*size + ec;
+    if(dy < 0 && er < size-1) index = (er+1)*size + ec;
+  }
+
+  if(index !== null) slideByIndex(index);
+});
+
+/* ランキング（ローカル） */
 function saveRecord(name,time){
-  const key=`rank_${size}`;
-  const list=JSON.parse(localStorage.getItem(key)||"[]");
+  const key = `rank_${size}`;
+  const list = JSON.parse(localStorage.getItem(key)||"[]");
   list.push({name,time});
   list.sort((a,b)=>a.time-b.time);
   localStorage.setItem(key,JSON.stringify(list.slice(0,20)));
-  return list.findIndex(r=>r.name===name&&r.time===time)+1;
+  return list.findIndex(r=>r.name===name && r.time===time)+1;
 }
 
 function loadRanking(){
-  const key=`rank_${size}`;
-  const list=JSON.parse(localStorage.getItem(key)||"[]");
+  const key = `rank_${size}`;
+  const list = JSON.parse(localStorage.getItem(key)||"[]");
   rankList.innerHTML="";
   list.forEach((r,i)=>{
-    rankList.innerHTML+=`<li>${i+1}. ${r.name} - ${r.time}s</li>`;
+    rankList.innerHTML += `<li>${i+1}. ${r.name} - ${r.time}s</li>`;
   });
 }
 
@@ -127,15 +196,16 @@ function loadRanking(){
 function finish(){
   playing=false;
   clearInterval(timer);
-  const time=Math.floor((Date.now()-startTime)/1000);
-  const name=nameInput.value.trim()||"user";
-  const rank=saveRecord(name,time);
 
-  document.getElementById("clearBadge").textContent=
+  const time = Math.floor((Date.now()-startTime)/1000);
+  const name = nameInput.value.trim() || "user";
+  const rank = saveRecord(name,time);
+
+  document.getElementById("clearBadge").textContent =
     rank===1 ? "🎉 自己ベスト更新！" : "";
-  document.getElementById("clearMainResult").textContent=
+  document.getElementById("clearMainResult").textContent =
     `${name} - ${time}s`;
-  document.getElementById("selfRankText").textContent=
+  document.getElementById("selfRankText").textContent =
     `この端末での順位：${rank}位`;
 
   document.getElementById("clearModal").classList.remove("hidden");
@@ -143,9 +213,9 @@ function finish(){
 }
 
 /* クリア操作 */
-document.getElementById("retryBtn").onclick=()=>{ closeModal(); startGame(); };
-document.getElementById("okBtn").onclick=closeModal;
-document.getElementById("shareBtn").onclick=async()=>{
+document.getElementById("retryBtn").onclick = ()=>{ closeModal(); startGame(); };
+document.getElementById("okBtn").onclick = closeModal;
+document.getElementById("shareBtn").onclick = async()=>{
   if(navigator.share){
     await navigator.share({title:"Merosura",url:location.href});
   }else{
@@ -160,10 +230,10 @@ function closeModal(){
 
 /* 紙吹雪 */
 function launchConfetti(){
-  const c=document.getElementById("confetti");
+  const c = document.getElementById("confetti");
   c.innerHTML="";
   for(let i=0;i<80;i++){
-    const p=document.createElement("div");
+    const p = document.createElement("div");
     p.className="confetti-piece";
     p.style.left=Math.random()*100+"vw";
     p.style.setProperty("--hue",Math.random()*360);

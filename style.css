@@ -7,7 +7,7 @@ body {
   text-align: center;
 }
 
-header {
+.header {
   position: relative;
   padding: 14px;
 }
@@ -88,9 +88,10 @@ main {
   display: flex;
   align-items: center;
   justify-content: center;
+  cursor: pointer;
 }
 
-.empty { background: transparent; }
+.empty { background: transparent; cursor: default; }
 
 .hidden { display: none; }
 
