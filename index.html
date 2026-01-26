@@ -3,15 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Merosura | sweet slide puzzle</title>
-  <meta name="description" content="チョコレート風デザインのスライドパズル。3×3〜10×10。スマホはスワイプ操作対応。">
+  <title>Merosura</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
 <header class="header">
-  <h1 class="logo">Merosura</h1>
-  <p class="tagline">slide the sweetness 🍫</p>
+  <h1>Merosura</h1>
+  <p>sweet slide puzzle 🍫</p>
 </header>
 
 <section class="controls">
@@ -29,10 +28,7 @@
   </div>
 
   <button id="startBtn">START</button>
-
-  <div class="status">
-    <span id="time">time: --:--</span>
-  </div>
+  <div id="time">time: --:--</div>
 </section>
 
 <main>
@@ -40,33 +36,23 @@
 </main>
 
 <!-- AFFILIATE -->
-<div id="affiliate" class="affiliate hidden">
-  <!-- ※本ページにはアフィリエイト広告が含まれています -->
-  <!-- A8広告4つをここにそのまま貼る -->
+<div id="affiliate" class="hidden">
+  <!-- A8広告ここ -->
 </div>
 
-<!-- RANKING -->
-<section class="ranking">
-  <h2>🏆 Ranking</h2>
+<!-- RANKING BUTTON -->
+<button id="openRanking">🏆 ランキング</button>
 
-  <h3>Personal Best</h3>
-  <ul id="rank-personal"></ul>
-
-  <h3>World Best</h3>
-  <ul id="rank-world">
-    <li>world1 - 10s</li>
-    <li>world2 - 12s</li>
-    <li>world3 - 15s</li>
-  </ul>
-</section>
-
-<!-- CLEAR MODAL -->
-<div id="clearModal" class="modal hidden">
-  <div class="modal-box">
-    <h2>🍫 SWEET CLEAR!</h2>
-    <p id="resultText"></p>
-    <button onclick="closeModal()">OK</button>
+<!-- RANKING SCREEN -->
+<div id="rankingScreen" class="hidden">
+  <div class="rank-header">
+    <button id="worldBtn">🌍 世界</button>
+    <button id="personalBtn">👤 自己ベスト</button>
   </div>
+
+  <ul id="rankList"></ul>
+
+  <button id="closeRanking">戻る</button>
 </div>
 
 <audio id="moveSound" src="move.mp3" preload="auto"></audio>
