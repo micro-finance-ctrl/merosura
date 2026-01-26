@@ -1,3 +1,7 @@
+* {
+  box-sizing: border-box;
+}
+
 body {
   margin: 0;
   font-family: system-ui, sans-serif;
@@ -5,9 +9,13 @@ body {
   text-align: center;
 }
 
-.header { padding: 12px; }
+.header {
+  padding: 12px;
+}
 
-.controls { padding: 10px; }
+.controls {
+  padding: 10px;
+}
 
 .sizes button {
   margin: 3px;
@@ -18,7 +26,9 @@ body {
   font-weight: 700;
 }
 
-.sizes .active { background: #ccc; }
+.sizes .active {
+  background: #ccc;
+}
 
 #startBtn {
   margin: 8px;
@@ -31,27 +41,45 @@ body {
 }
 
 #board {
-  margin: 10px auto;
+  margin: 12px auto;
   display: grid;
   gap: 6px;
   width: min(90vmin, 420px);
 }
 
 .tile {
-  aspect-ratio: 1/1;
+  aspect-ratio: 1 / 1;
   background: #5a3a2e;
   color: #fff;
   font-weight: 900;
   display: flex;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
   border-radius: 10px;
 }
 
-.empty { background: transparent; }
+.empty {
+  background: transparent;
+}
 
-.hidden { display: none; }
+/* ===== 広告フェード ===== */
+.affiliate {
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+  margin: 12px auto;
+}
 
+.affiliate.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.hidden {
+  display: none;
+}
+
+/* ===== ランキング ===== */
 #rankingScreen {
   position: fixed;
   inset: 0;
@@ -59,7 +87,7 @@ body {
   padding: 16px;
 }
 
-.rank-header button {
+.rank-tabs button {
   margin: 4px;
   padding: 6px 14px;
   border-radius: 999px;
