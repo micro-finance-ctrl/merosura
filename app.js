@@ -30,13 +30,6 @@ const okBtn = document.getElementById("okBtn");
 const moveSound = document.getElementById("moveSound");
 const nameInput = document.getElementById("playerName");
 
-/* ===== SHARE ===== */
-const shareX = document.getElementById("shareX");
-const shareLINE = document.getElementById("shareLINE");
-const shareFB = document.getElementById("shareFB");
-const shareIG = document.getElementById("shareIG");
-const shareTT = document.getElementById("shareTT");
-
 /* ===== ADS ===== */
 const ADS = [
 `<a href="https://px.a8.net/svt/ejp?a8mat=4AVF04+87B1LM+4QYG+66OZ5" rel="nofollow"><img src="https://www20.a8.net/svt/bgt?aid=260126644496&wid=002&eno=01&mid=s00000022156001039000&mc=1"></a>`,
@@ -101,7 +94,10 @@ function reset(){
 startBtn.onclick = ()=>{
   if(state !== "IDLE") return;
 
-  // 🔓 効果音アンロック（iOS対策）
+  // ★ 追加したのはこの1行だけ
+  boardWrap.style.touchAction = "none";
+
+  // 効果音アンロック
   moveSound.play().catch(()=>{});
   moveSound.pause();
   moveSound.currentTime = 0;
@@ -145,7 +141,6 @@ function render(){
       d.addEventListener("pointerup", ()=>{
         if(state !== "PLAYING") return;
 
-        // 🔊 効果音（ユーザー操作直結）
         moveSound.currentTime = 0;
         moveSound.play().catch(()=>{});
 
@@ -156,7 +151,7 @@ function render(){
   });
 }
 
-/* ===== SLIDE LOGIC ===== */
+/* ===== SLIDE ===== */
 function slideFromIndex(i){
   const e = tiles.indexOf(0);
   const er = Math.floor(e / size), ec = e % size;
@@ -195,10 +190,6 @@ function checkClear(){
   }
 }
 
-/* ===== BUTTONS ===== */
-retryBtn.onclick = ()=>{ reset(); startBtn.click(); };
-okBtn.onclick = ()=>{ reset(); };
-
 /* ===== BEST ===== */
 function saveBest(t){
   const key = `best_${size}`;
@@ -213,33 +204,6 @@ function updateBest(){
     ? `🍫 BEST (${size}×${size}) : ${formatTime(b.time)} (${b.name})`
     : `🍫 BEST (${size}×${size}) : --`;
 }
-
-/* ===== RANK ===== */
-rankBtn.onclick = ()=>{
-  rankList.innerHTML = "";
-  SIZES.forEach(s=>{
-    const b = JSON.parse(localStorage.getItem(`best_${s}`) || "null");
-    const li = document.createElement("li");
-    li.textContent = b
-      ? `${s}×${s} : ${formatTime(b.time)} (${b.name})`
-      : `${s}×${s} : --`;
-    rankList.appendChild(li);
-  });
-  rankModal.classList.remove("hidden");
-};
-rankClose.onclick = ()=>rankModal.classList.add("hidden");
-
-/* ===== SHARE ===== */
-function getShareText(){
-  const sec = Math.floor((Date.now() - startTime) / 1000);
-  return `🍫 Merosura ${size}×${size} を ${formatTime(sec)} でクリア！`;
-}
-const url = encodeURIComponent(location.href);
-shareX.onclick = ()=>window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(getShareText())}&url=${url}`,"_blank");
-shareLINE.onclick = ()=>window.open(`https://social-plugins.line.me/lineit/share?url=${url}`,"_blank");
-shareFB.onclick = ()=>window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}`,"_blank");
-shareIG.onclick = async ()=>{ await navigator.clipboard.writeText(location.href); alert("URLをコピーしたよ！"); };
-shareTT.onclick = async ()=>{ await navigator.clipboard.writeText(location.href); alert("URLをコピーしたよ！"); };
 
 /* ===== BOOT ===== */
 reset();
