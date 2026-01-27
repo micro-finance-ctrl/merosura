@@ -76,7 +76,6 @@ main {
   display: flex;
   align-items: center;
   justify-content: center;
-  user-select: none;
 }
 
 .empty { background: #f3d9c4; }
@@ -91,43 +90,45 @@ main {
   align-items: center;
   justify-content: center;
   pointer-events: none;
-  z-index: 5;
 }
 
 .hidden { display: none; }
 
 .ad-zone {
-  margin: 12px auto;
+  margin: 16px auto;
   max-width: 320px;
   position: relative;
   z-index: 10;
 }
-.ad-zone img {
-  max-width: 100%;
-  height: auto;
-}
+
+.big-ad { max-width: 360px; }
 
 .modal {
   position: fixed;
   inset: 0;
   background: rgba(0,0,0,0.6);
-  z-index: 6;
 }
 
 .box {
   background: #fff;
   border-radius: 20px;
   padding: 20px;
-  width: 80%;
-  max-width: 320px;
-  margin: 20vh auto;
+  width: 85%;
+  max-width: 360px;
+  margin: 10vh auto;
+}
+
+.box.large {
+  width: 90%;
+  max-width: 420px;
 }
 
 .clear-actions,
 .share-buttons {
   display: flex;
   justify-content: center;
-  gap: 10px;
+  gap: 8px;
+  flex-wrap: wrap;
 }
 
 .clear-actions button,

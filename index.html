@@ -18,13 +18,11 @@
     <input id="playerName" maxlength="15" placeholder="名前（任意）">
     <button id="startBtn">START 🍫</button>
   </div>
-
   <div id="sizes"></div>
-  <div id="time">⏱ --</div>
+  <div id="time">⏱ 0時間0分0秒</div>
 </section>
 
 <main>
-  <!-- START前ヒント -->
   <div id="hint" class="overlay hidden">
     🔒 まだ始まってないよ<br>START🍫を押してね
   </div>
@@ -32,28 +30,29 @@
   <div id="board"></div>
   <div id="best"></div>
 
-  <!-- START前広告 -->
   <div id="idleAd" class="ad-zone hidden"></div>
 </main>
 
 <!-- CLEAR -->
 <div id="clearModal" class="modal hidden">
-  <div class="box">
+  <div class="box large">
     <h2>🍫 SWEET CLEAR!</h2>
     <p id="clearText"></p>
 
-    <!-- SNS SHARE -->
+    <!-- SNS -->
     <div class="share-area">
       <p>🎉 記録をシェア</p>
       <div class="share-buttons">
         <button id="shareX">X</button>
         <button id="shareLINE">LINE</button>
-        <button id="shareCopy">URL</button>
+        <button id="shareFB">Facebook</button>
+        <button id="shareIG">Instagram</button>
+        <button id="shareTT">TikTok</button>
       </div>
+      <small>※ Instagram / TikTok はURLコピー方式</small>
     </div>
 
-    <!-- CLEAR後広告 -->
-    <div id="clearAd" class="ad-zone"></div>
+    <div id="clearAd" class="ad-zone big-ad"></div>
 
     <div class="clear-actions">
       <button id="retryBtn">もう一回</button>
