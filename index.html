@@ -1,22 +1,22 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Merosura</title>
-  <meta name="description" content="sweet slide puzzle 🍫">
-  <link rel="stylesheet" href="style.css">
+  <meta name="description" content="sweet slide puzzle 🍫" />
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
 <header class="header">
   <h1>Merosura</h1>
-  <p class="hint">空白に向かってスライド</p>
+  <p class="hint">空白に向かってスワイプ</p>
 </header>
 
 <section class="controls">
   <div class="name-start">
-    <input id="playerName" maxlength="15" placeholder="名前（任意）">
+    <input id="playerName" maxlength="15" placeholder="名前（任意）" />
     <button id="startBtn">START</button>
   </div>
 
@@ -35,22 +35,23 @@
 </section>
 
 <main>
-  <!-- START前タップ時の理由表示 -->
+  <!-- START前に盤面を触った理由表示（毎回） -->
   <div id="tapHint" class="tap-hint hidden">
     🔒 まだ始まってないよ<br>
     STARTを押してね
   </div>
 
-  <div id="board"></div>
+  <div id="board" class="locked"></div>
+
+  <!-- サイズ別自己ベスト -->
+  <div id="bestRecord">BEST (--×--) : --</div>
 </main>
 
 <!-- クリア -->
 <div id="clearModal" class="modal hidden">
   <div class="modal-box">
-    <div id="clearBadge"></div>
     <h2>🍫 SWEET CLEAR!</h2>
     <div id="clearMainResult"></div>
-    <div id="selfRankText"></div>
 
     <div class="clear-buttons">
       <button id="retryBtn">もう一回</button>
