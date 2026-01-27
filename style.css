@@ -7,18 +7,28 @@ body {
   text-align: center;
 }
 
+/* ===== HEADER（余白を詰める） ===== */
 header {
   display: flex;
   justify-content: space-between;
-  padding: 10px 14px;
+  align-items: center;
+  padding: 10px 14px 6px;   /* ← 上下を詰める */
 }
 
-.top { padding: 10px; }
+header h1 {
+  margin: 0;
+  line-height: 1.1;        /* ← 文字上下を圧縮 */
+}
+
+/* ===== TOP ===== */
+.top {
+  padding: 8px 10px;       /* ← 全体を少し詰める */
+}
 
 .name-start {
   display: flex;
   max-width: 360px;
-  margin: 0 auto 10px;
+  margin: 0 auto 8px;
 }
 
 .name-start input {
@@ -46,10 +56,12 @@ header {
 #sizes .active { background: #ffd3b8; }
 
 #time {
-  font-size: 26px;
+  font-size: 24px;
   font-weight: 900;
+  margin-top: 4px;
 }
 
+/* ===== MAIN ===== */
 main {
   position: relative;
   display: flex;
@@ -57,17 +69,17 @@ main {
   align-items: center;
 }
 
-/* ===== 操作ゾーン ===== */
+/* ===== 盤面操作ゾーン ===== */
 #boardWrap {
-  padding: 24px;
+  padding: 24px;   /* 盤面の周りは今まで通り確保 */
 }
 
-/* ▶ START前：スクロールOK（広告まで行ける） */
+/* START前：スクロールOK（広告まで行ける） */
 body.idle #boardWrap {
-  touch-action: pan-y;
+  touch-action: auto;
 }
 
-/* ▶ PLAY中：ページスクロール完全禁止 */
+/* PLAY中：盤面操作に集中（ページスクロール禁止） */
 body.playing #boardWrap {
   touch-action: none;
 }
@@ -94,6 +106,7 @@ body.playing #boardWrap {
 
 .empty { background: #f3d9c4; }
 
+/* ===== ロック表示 ===== */
 .overlay {
   position: absolute;
   inset: 0;
@@ -108,6 +121,26 @@ body.playing #boardWrap {
 
 .hidden { display: none; }
 
+/* ===== BEST / RANKING（横長） ===== */
+#best {
+  margin: 10px auto;
+  padding: 10px 14px;
+  width: min(92vw, 720px);   /* ← 横長 */
+  background: #fff;
+  border-radius: 16px;
+  font-size: 14px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+}
+
+/* ランキングモーダル内リストも横並び感を出す */
+#rankList {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px 16px;
+  padding: 0;
+  list-style: none;
+}
+
 /* ===== 広告（SP最適化） ===== */
 .ad-zone {
   margin: 16px auto;
@@ -115,6 +148,7 @@ body.playing #boardWrap {
   position: relative;
   z-index: 10;
 }
+
 .ad-zone img {
   width: 100%;
   height: auto;
@@ -124,6 +158,7 @@ body.playing #boardWrap {
   margin: 20px auto;
 }
 
+/* ===== MODAL ===== */
 .modal {
   position: fixed;
   inset: 0;
