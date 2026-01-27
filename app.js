@@ -29,14 +29,14 @@ const okBtn = document.getElementById("okBtn");
 const moveSound = document.getElementById("moveSound");
 const nameInput = document.getElementById("playerName");
 
-/* ===== SHARE ===== */
+/* SHARE */
 const shareX = document.getElementById("shareX");
 const shareLINE = document.getElementById("shareLINE");
 const shareFB = document.getElementById("shareFB");
 const shareIG = document.getElementById("shareIG");
 const shareTT = document.getElementById("shareTT");
 
-/* ===== ADS ===== */
+/* ADS */
 const ADS = [
 `<a href="https://px.a8.net/svt/ejp?a8mat=4AVF04+87B1LM+4QYG+66OZ5" rel="nofollow"><img src="https://www20.a8.net/svt/bgt?aid=260126644496&wid=002&eno=01&mid=s00000022156001039000&mc=1"></a>`,
 `<a href="https://px.a8.net/svt/ejp?a8mat=4AVF04+61B9CQ+4EKC+631SX" rel="nofollow"><img src="https://www28.a8.net/svt/bgt?aid=260126644365&wid=002&eno=01&mid=s00000020550001022000&mc=1"></a>`,
@@ -52,7 +52,6 @@ let tiles = [];
 let state = "IDLE";
 let timer = null;
 let startTime = 0;
-
 const getName = () => nameInput.value.trim() || "USER";
 
 /* ===== SIZE BUTTONS ===== */
@@ -114,9 +113,8 @@ startBtn.onclick = ()=>{
 
 /* ===== SHUFFLE ===== */
 function shuffle(){
-  do {
-    tiles.sort(()=>Math.random() - 0.5);
-  } while(!isSolvable() || isSolved());
+  do { tiles.sort(()=>Math.random() - 0.5); }
+  while(!isSolvable() || isSolved());
 }
 
 function isSolvable(){
@@ -140,16 +138,23 @@ function render(){
     const d = document.createElement("div");
     d.className = "tile" + (n === 0 ? " empty" : "");
     d.textContent = n || "";
+
     if(n !== 0){
+      // 👇 ユーザー操作直結で効果音を鳴らす
       d.addEventListener("pointerup", ()=>{
-        if(state === "PLAYING") slideFromIndex(i);
+        if(state !== "PLAYING") return;
+
+        moveSound.currentTime = 0;
+        moveSound.play().catch(()=>{});
+
+        slideFromIndex(i);
       });
     }
     board.appendChild(d);
   });
 }
 
-/* ===== SLIDE ===== */
+/* ===== SLIDE LOGIC（音はここでは鳴らさない）===== */
 function slideFromIndex(i){
   const e = tiles.indexOf(0);
   const er = Math.floor(e / size), ec = e % size;
@@ -171,10 +176,6 @@ function slideFromIndex(i){
     tiles[p] = 0;
     pos = p;
   });
-
-  // 🔊 効果音：必ずここで鳴らす
-  moveSound.currentTime = 0;
-  moveSound.play().catch(()=>{});
 
   render();
   checkClear();
