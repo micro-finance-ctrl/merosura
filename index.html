@@ -10,45 +10,48 @@
 
 <header>
   <h1>🍫 Merosura</h1>
-  <button id="rankBtn">🏆 RANK</button>
 </header>
 
 <section class="top">
   <div class="name-start">
-    <input id="playerName" placeholder="名前（任意）" maxlength="15">
-    <button id="startBtn">START🍫</button>
+    <input id="playerName" maxlength="15" placeholder="名前（任意）">
+    <button id="startBtn">START 🍫</button>
   </div>
 
-  <div class="sizes">
-    <button data-size="3" class="active">3×3</button>
-    <button data-size="4">4×4</button>
-    <button data-size="5">5×5</button>
-  </div>
-
+  <div id="sizes"></div>
   <div id="time">⏱ --</div>
 </section>
 
 <main>
-  <div id="tapHint" class="hint hidden">
+  <!-- START前タップ時の理由表示（毎回） -->
+  <div id="hint" class="hidden">
     🔒 まだ始まってないよ<br>START🍫を押してね
   </div>
 
   <div id="board" class="locked"></div>
+  <div id="best">🍫 BEST : --</div>
 
-  <div id="best">🍫 BEST (--×--) : --</div>
+  <!-- START前広告（4x4以上のみ） -->
+  <div id="idleAd" class="ad-zone hidden"></div>
 </main>
 
-<!-- CLEAR -->
-<div id="clear" class="modal hidden">
+<!-- CLEAR画面 -->
+<div id="clearModal" class="modal hidden">
   <div class="box">
     <h2>🍫 SWEET CLEAR!</h2>
     <p id="clearText"></p>
-    <button id="retry">もう一回</button>
-    <button id="ok">OK</button>
+
+    <!-- CLEAR後広告 -->
+    <div id="clearAd" class="ad-zone"></div>
+
+    <div class="clear-actions">
+      <button id="retryBtn">もう一回</button>
+      <button id="okBtn">OK</button>
+    </div>
   </div>
 </div>
 
-<audio id="move" src="move.mp3" preload="auto"></audio>
+<audio id="moveSound" src="move.mp3" preload="auto"></audio>
 <script src="app.js"></script>
 </body>
 </html>
