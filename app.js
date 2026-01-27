@@ -8,6 +8,7 @@ function formatTime(sec){
 
 /* ===== ELEMENTS ===== */
 const board = document.getElementById("board");
+const boardWrap = document.getElementById("boardWrap");
 const startBtn = document.getElementById("startBtn");
 const timeEl = document.getElementById("time");
 const hint = document.getElementById("hint");
@@ -29,14 +30,14 @@ const okBtn = document.getElementById("okBtn");
 const moveSound = document.getElementById("moveSound");
 const nameInput = document.getElementById("playerName");
 
-/* SHARE */
+/* ===== SHARE ===== */
 const shareX = document.getElementById("shareX");
 const shareLINE = document.getElementById("shareLINE");
 const shareFB = document.getElementById("shareFB");
 const shareIG = document.getElementById("shareIG");
 const shareTT = document.getElementById("shareTT");
 
-/* ADS */
+/* ===== ADS ===== */
 const ADS = [
 `<a href="https://px.a8.net/svt/ejp?a8mat=4AVF04+87B1LM+4QYG+66OZ5" rel="nofollow"><img src="https://www20.a8.net/svt/bgt?aid=260126644496&wid=002&eno=01&mid=s00000022156001039000&mc=1"></a>`,
 `<a href="https://px.a8.net/svt/ejp?a8mat=4AVF04+61B9CQ+4EKC+631SX" rel="nofollow"><img src="https://www28.a8.net/svt/bgt?aid=260126644365&wid=002&eno=01&mid=s00000020550001022000&mc=1"></a>`,
@@ -72,6 +73,9 @@ SIZES.forEach(s=>{
 /* ===== STATE ===== */
 function setState(s){
   state = s;
+  document.body.classList.remove("idle","playing","clear");
+  document.body.classList.add(s.toLowerCase());
+
   hint.classList.toggle("hidden", s !== "IDLE");
   idleAd.classList.toggle("hidden", !(s === "IDLE" && size >= 4));
   clearModal.classList.toggle("hidden", s !== "CLEAR");
@@ -116,7 +120,6 @@ function shuffle(){
   do { tiles.sort(()=>Math.random() - 0.5); }
   while(!isSolvable() || isSolved());
 }
-
 function isSolvable(){
   let inv = 0;
   for(let i=0;i<tiles.length;i++)
@@ -126,7 +129,6 @@ function isSolvable(){
   const row = size - Math.floor(tiles.indexOf(0) / size);
   return row % 2 === 0 ? inv % 2 === 1 : inv % 2 === 0;
 }
-
 function isSolved(){
   return tiles.slice(0,-1).every((v,i)=>v === i+1);
 }
@@ -140,10 +142,10 @@ function render(){
     d.textContent = n || "";
 
     if(n !== 0){
-      // 👇 ユーザー操作直結で効果音を鳴らす
       d.addEventListener("pointerup", ()=>{
         if(state !== "PLAYING") return;
 
+        // 🔊 効果音（ユーザー操作直結）
         moveSound.currentTime = 0;
         moveSound.play().catch(()=>{});
 
@@ -154,7 +156,7 @@ function render(){
   });
 }
 
-/* ===== SLIDE LOGIC（音はここでは鳴らさない）===== */
+/* ===== SLIDE LOGIC ===== */
 function slideFromIndex(i){
   const e = tiles.indexOf(0);
   const er = Math.floor(e / size), ec = e % size;
@@ -205,7 +207,6 @@ function saveBest(t){
     localStorage.setItem(key, JSON.stringify({ name: getName(), time: t }));
   }
 }
-
 function updateBest(){
   const b = JSON.parse(localStorage.getItem(`best_${size}`) || "null");
   bestEl.textContent = b

@@ -57,10 +57,19 @@ main {
   align-items: center;
 }
 
-/* ★ 操作ゾーン拡張 */
+/* ===== 操作ゾーン ===== */
 #boardWrap {
-  padding: 24px;          /* ← 指がはみ出てもOK */
-  touch-action: none;     /* ← ページスクロール・ズーム抑止 */
+  padding: 24px;
+}
+
+/* ▶ START前：スクロールOK（広告まで行ける） */
+body.idle #boardWrap {
+  touch-action: pan-y;
+}
+
+/* ▶ PLAY中：ページスクロール完全禁止 */
+body.playing #boardWrap {
+  touch-action: none;
 }
 
 #board {
@@ -70,7 +79,6 @@ main {
   padding: 8px;
   background: #f3d9c4;
   border-radius: 16px;
-  touch-action: none;
 }
 
 .tile {
@@ -100,7 +108,7 @@ main {
 
 .hidden { display: none; }
 
-/* ★ 広告：SPでも見切れない */
+/* ===== 広告（SP最適化） ===== */
 .ad-zone {
   margin: 16px auto;
   width: min(92vw, 360px);
