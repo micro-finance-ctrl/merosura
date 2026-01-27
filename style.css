@@ -57,6 +57,12 @@ main {
   align-items: center;
 }
 
+/* ★ 操作ゾーン拡張 */
+#boardWrap {
+  padding: 24px;          /* ← 指がはみ出てもOK */
+  touch-action: none;     /* ← ページスクロール・ズーム抑止 */
+}
+
 #board {
   width: min(90vmin, 360px);
   display: grid;
@@ -94,14 +100,21 @@ main {
 
 .hidden { display: none; }
 
+/* ★ 広告：SPでも見切れない */
 .ad-zone {
   margin: 16px auto;
-  max-width: 320px;
+  width: min(92vw, 360px);
   position: relative;
   z-index: 10;
 }
+.ad-zone img {
+  width: 100%;
+  height: auto;
+}
 
-.big-ad { max-width: 360px; }
+.big-ad {
+  margin: 20px auto;
+}
 
 .modal {
   position: fixed;
