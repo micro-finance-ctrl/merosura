@@ -18,13 +18,18 @@ const retryBtn = document.getElementById("retryBtn");
 const okBtn = document.getElementById("okBtn");
 
 const moveSound = document.getElementById("moveSound");
+const nameInput = document.getElementById("playerName");
+
+const shareX = document.getElementById("shareX");
+const shareLINE = document.getElementById("shareLINE");
+const shareCopy = document.getElementById("shareCopy");
 
 /* ===== ADS ===== */
 const ADS = [
-  `<a href="https://px.a8.net/svt/ejp?a8mat=4AVF04+87B1LM+4QYG+66OZ5" rel="nofollow"><img src="https://www20.a8.net/svt/bgt?aid=260126644496&wid=002&eno=01&mid=s00000022156001039000&mc=1"></a>`,
-  `<a href="https://px.a8.net/svt/ejp?a8mat=4AVF04+61B9CQ+4EKC+631SX" rel="nofollow"><img src="https://www28.a8.net/svt/bgt?aid=260126644365&wid=002&eno=01&mid=s00000020550001022000&mc=1"></a>`,
-  `<a href="https://px.a8.net/svt/ejp?a8mat=4AVF04+4BE6FU+5SHA+5Z6WX" rel="nofollow"><img src="https://www20.a8.net/svt/bgt?aid=260126644261&wid=002&eno=01&mid=s00000027019001004000&mc=1"></a>`,
-  `<a href="https://px.a8.net/svt/ejp?a8mat=4AVF04+4RGVRU+NA2+62U35" rel="nofollow"><img src="https://www29.a8.net/svt/bgt?aid=260126644288&wid=002&eno=01&mid=s00000003017001021000&mc=1"></a>`
+`<a href="https://px.a8.net/svt/ejp?a8mat=4AVF04+87B1LM+4QYG+66OZ5" rel="nofollow"><img src="https://www20.a8.net/svt/bgt?aid=260126644496&wid=002&eno=01&mid=s00000022156001039000&mc=1"></a>`,
+`<a href="https://px.a8.net/svt/ejp?a8mat=4AVF04+61B9CQ+4EKC+631SX" rel="nofollow"><img src="https://www28.a8.net/svt/bgt?aid=260126644365&wid=002&eno=01&mid=s00000020550001022000&mc=1"></a>`,
+`<a href="https://px.a8.net/svt/ejp?a8mat=4AVF04+4BE6FU+5SHA+5Z6WX" rel="nofollow"><img src="https://www20.a8.net/svt/bgt?aid=260126644261&wid=002&eno=01&mid=s00000027019001004000&mc=1"></a>`,
+`<a href="https://px.a8.net/svt/ejp?a8mat=4AVF04+4RGVRU+NA2+62U35" rel="nofollow"><img src="https://www29.a8.net/svt/bgt?aid=260126644288&wid=002&eno=01&mid=s00000003017001021000&mc=1"></a>`
 ];
 const pickAd = () => ADS[Math.floor(Math.random()*ADS.length)];
 
@@ -35,6 +40,8 @@ let tiles = [];
 let state = "IDLE";
 let timer = null;
 let startTime = 0;
+
+const getName = () => nameInput.value.trim() || "USER";
 
 /* ===== SIZE BUTTONS ===== */
 const sizesEl = document.getElementById("sizes");
@@ -54,7 +61,6 @@ SIZES.forEach(s=>{
 /* ===== STATE ===== */
 function setState(s){
   state=s;
-
   hint.classList.toggle("hidden", s!=="IDLE");
   idleAd.classList.toggle("hidden", !(s==="IDLE" && size>=4));
   clearModal.classList.toggle("hidden", s!=="CLEAR");
@@ -80,7 +86,6 @@ function reset(){
 startBtn.onclick=()=>{
   if(state!=="IDLE") return;
   setState("PLAYING");
-
   startTime=Date.now();
   timeEl.textContent="⏱ 0s";
 
@@ -119,9 +124,9 @@ function render(){
     d.className="tile"+(n===0?" empty":"");
     d.textContent=n||"";
     if(n!==0){
-      d.onclick=()=>{
+      d.addEventListener("pointerup",()=>{
         if(state==="PLAYING") slideFromIndex(i);
-      };
+      });
     }
     board.appendChild(d);
   });
@@ -174,28 +179,54 @@ okBtn.onclick=()=>{ reset(); };
 /* ===== BEST ===== */
 function saveBest(t){
   const key=`best_${size}`;
-  const prev=localStorage.getItem(key);
-  if(!prev || t<+prev) localStorage.setItem(key,t);
+  const prev=JSON.parse(localStorage.getItem(key)||"null");
+  if(!prev||t<prev.time){
+    localStorage.setItem(key,JSON.stringify({name:getName(),time:t}));
+  }
 }
 function updateBest(){
-  const b=localStorage.getItem(`best_${size}`);
-  bestEl.textContent=`🍫 BEST (${size}×${size}) : ${b?b+"s":"--"}`;
+  const b=JSON.parse(localStorage.getItem(`best_${size}`)||"null");
+  bestEl.textContent=b
+    ? `🍫 BEST (${size}×${size}) : ${b.time}s (${b.name})`
+    : `🍫 BEST (${size}×${size}) : --`;
 }
 
 /* ===== RANK ===== */
 rankBtn.onclick=()=>{
   rankList.innerHTML="";
   SIZES.forEach(s=>{
+    const b=JSON.parse(localStorage.getItem(`best_${s}`)||"null");
     const li=document.createElement("li");
-    const b=localStorage.getItem(`best_${s}`);
-    li.textContent=`${s}×${s} : ${b?b+"s":"--"}`;
+    li.textContent=b?`${s}×${s} : ${b.time}s (${b.name})`:`${s}×${s} : --`;
     rankList.appendChild(li);
   });
   rankModal.classList.remove("hidden");
 };
 rankClose.onclick=()=>rankModal.classList.add("hidden");
 
-/* ===== TOUCH ===== */
+/* ===== SHARE ===== */
+function getShareText(){
+  const t=Math.floor((Date.now()-startTime)/1000);
+  return `🍫 Merosura ${size}×${size} を ${t}s でクリア！\n${location.href}`;
+}
+shareX.onclick=()=>{
+  window.open(
+    `https://twitter.com/intent/tweet?text=${encodeURIComponent(getShareText())}`,
+    "_blank"
+  );
+};
+shareLINE.onclick=()=>{
+  window.open(
+    `https://social-plugins.line.me/lineit/share?url=${encodeURIComponent(location.href)}`,
+    "_blank"
+  );
+};
+shareCopy.onclick=async()=>{
+  await navigator.clipboard.writeText(location.href);
+  alert("URLをコピーしたよ！");
+};
+
+/* ===== SWIPE ===== */
 let sx=0, sy=0;
 board.addEventListener("touchstart",e=>{
   if(state!=="PLAYING") return;

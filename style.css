@@ -91,6 +91,7 @@ main {
   align-items: center;
   justify-content: center;
   pointer-events: none;
+  z-index: 5;
 }
 
 .hidden { display: none; }
@@ -98,6 +99,8 @@ main {
 .ad-zone {
   margin: 12px auto;
   max-width: 320px;
+  position: relative;
+  z-index: 10;
 }
 .ad-zone img {
   max-width: 100%;
@@ -108,7 +111,9 @@ main {
   position: fixed;
   inset: 0;
   background: rgba(0,0,0,0.6);
+  z-index: 6;
 }
+
 .box {
   background: #fff;
   border-radius: 20px;
@@ -117,16 +122,19 @@ main {
   max-width: 320px;
   margin: 20vh auto;
 }
-.clear-actions {
+
+.clear-actions,
+.share-buttons {
   display: flex;
   justify-content: center;
   gap: 10px;
 }
-.clear-actions button {
-  padding: 10px 16px;
+
+.clear-actions button,
+.share-buttons button {
+  padding: 8px 14px;
   border-radius: 999px;
   border: none;
-  background: #6b3518;
-  color: #fff;
-  font-weight: 900;
+  background: #ffd3b8;
+  font-weight: 800;
 }

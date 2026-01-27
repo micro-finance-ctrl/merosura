@@ -24,7 +24,7 @@
 </section>
 
 <main>
-  <!-- IDLE時のみ表示されるヒント -->
+  <!-- START前ヒント -->
   <div id="hint" class="overlay hidden">
     🔒 まだ始まってないよ<br>START🍫を押してね
   </div>
@@ -32,16 +32,29 @@
   <div id="board"></div>
   <div id="best"></div>
 
-  <!-- IDLE広告 -->
+  <!-- START前広告 -->
   <div id="idleAd" class="ad-zone hidden"></div>
 </main>
 
-<!-- CLEARモーダル -->
+<!-- CLEAR -->
 <div id="clearModal" class="modal hidden">
   <div class="box">
     <h2>🍫 SWEET CLEAR!</h2>
     <p id="clearText"></p>
+
+    <!-- SNS SHARE -->
+    <div class="share-area">
+      <p>🎉 記録をシェア</p>
+      <div class="share-buttons">
+        <button id="shareX">X</button>
+        <button id="shareLINE">LINE</button>
+        <button id="shareCopy">URL</button>
+      </div>
+    </div>
+
+    <!-- CLEAR後広告 -->
     <div id="clearAd" class="ad-zone"></div>
+
     <div class="clear-actions">
       <button id="retryBtn">もう一回</button>
       <button id="okBtn">OK</button>
@@ -49,7 +62,7 @@
   </div>
 </div>
 
-<!-- ランキング -->
+<!-- RANK -->
 <div id="rankModal" class="modal hidden">
   <div class="box">
     <h2>🏆 BEST RECORDS</h2>
