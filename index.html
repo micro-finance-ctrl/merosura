@@ -1,69 +1,54 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Merosura</title>
-  <meta name="description" content="sweet slide puzzle 🍫" />
-  <link rel="stylesheet" href="style.css" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🍫 Merosura</title>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<header class="header">
-  <h1>Merosura</h1>
-  <p class="hint">空白に向かってスワイプ</p>
+<header>
+  <h1>🍫 Merosura</h1>
+  <button id="rankBtn">🏆 RANK</button>
 </header>
 
-<section class="controls">
+<section class="top">
   <div class="name-start">
-    <input id="playerName" maxlength="15" placeholder="名前（任意）" />
-    <button id="startBtn">START</button>
+    <input id="playerName" placeholder="名前（任意）" maxlength="15">
+    <button id="startBtn">START🍫</button>
   </div>
 
   <div class="sizes">
     <button data-size="3" class="active">3×3</button>
     <button data-size="4">4×4</button>
     <button data-size="5">5×5</button>
-    <button data-size="6">6×6</button>
-    <button data-size="7">7×7</button>
-    <button data-size="8">8×8</button>
-    <button data-size="9">9×9</button>
-    <button data-size="10">10×10</button>
   </div>
 
-  <div id="time">time: --</div>
+  <div id="time">⏱ --</div>
 </section>
 
 <main>
-  <!-- START前に盤面を触った理由表示（毎回） -->
-  <div id="tapHint" class="tap-hint hidden">
-    🔒 まだ始まってないよ<br>
-    STARTを押してね
+  <div id="tapHint" class="hint hidden">
+    🔒 まだ始まってないよ<br>START🍫を押してね
   </div>
 
   <div id="board" class="locked"></div>
 
-  <!-- サイズ別自己ベスト -->
-  <div id="bestRecord">BEST (--×--) : --</div>
+  <div id="best">🍫 BEST (--×--) : --</div>
 </main>
 
-<!-- クリア -->
-<div id="clearModal" class="modal hidden">
-  <div class="modal-box">
+<!-- CLEAR -->
+<div id="clear" class="modal hidden">
+  <div class="box">
     <h2>🍫 SWEET CLEAR!</h2>
-    <div id="clearMainResult"></div>
-
-    <div class="clear-buttons">
-      <button id="retryBtn">もう一回</button>
-      <button id="shareBtn">Share</button>
-      <button id="okBtn">OK</button>
-    </div>
+    <p id="clearText"></p>
+    <button id="retry">もう一回</button>
+    <button id="ok">OK</button>
   </div>
 </div>
 
-<div id="confetti"></div>
-
-<audio id="moveSound" src="move.mp3" preload="auto"></audio>
+<audio id="move" src="move.mp3" preload="auto"></audio>
 <script src="app.js"></script>
 </body>
 </html>
