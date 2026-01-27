@@ -10,6 +10,7 @@
 
 <header>
   <h1>🍫 Merosura</h1>
+  <button id="rankBtn">🏆</button>
 </header>
 
 <section class="top">
@@ -23,31 +24,37 @@
 </section>
 
 <main>
-  <!-- START前タップ時の理由表示（毎回） -->
-  <div id="hint" class="hidden">
+  <!-- IDLE時のみ表示されるヒント -->
+  <div id="hint" class="overlay hidden">
     🔒 まだ始まってないよ<br>START🍫を押してね
   </div>
 
-  <div id="board" class="locked"></div>
-  <div id="best">🍫 BEST : --</div>
+  <div id="board"></div>
+  <div id="best"></div>
 
-  <!-- START前広告（4x4以上のみ） -->
+  <!-- IDLE広告 -->
   <div id="idleAd" class="ad-zone hidden"></div>
 </main>
 
-<!-- CLEAR画面 -->
+<!-- CLEARモーダル -->
 <div id="clearModal" class="modal hidden">
   <div class="box">
     <h2>🍫 SWEET CLEAR!</h2>
     <p id="clearText"></p>
-
-    <!-- CLEAR後広告 -->
     <div id="clearAd" class="ad-zone"></div>
-
     <div class="clear-actions">
       <button id="retryBtn">もう一回</button>
       <button id="okBtn">OK</button>
     </div>
+  </div>
+</div>
+
+<!-- ランキング -->
+<div id="rankModal" class="modal hidden">
+  <div class="box">
+    <h2>🏆 BEST RECORDS</h2>
+    <ul id="rankList"></ul>
+    <button id="rankClose">閉じる</button>
   </div>
 </div>
 

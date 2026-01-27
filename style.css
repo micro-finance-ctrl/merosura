@@ -2,23 +2,18 @@
 
 body {
   margin: 0;
-  font-family: system-ui, -apple-system, sans-serif;
+  font-family: system-ui, sans-serif;
   background: #fff3e6;
   text-align: center;
 }
 
-body.lock {
-  overflow: hidden;
-  touch-action: none;
-}
-
 header {
-  padding: 10px;
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 14px;
 }
 
-.top {
-  padding: 10px;
-}
+.top { padding: 10px; }
 
 .name-start {
   display: flex;
@@ -42,31 +37,17 @@ header {
   font-weight: 900;
 }
 
-@keyframes pulse {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.07); }
-  100% { transform: scale(1); }
-}
-
-#startBtn.pulse {
-  animation: pulse 1.6s infinite;
-}
-
 #sizes button {
   margin: 3px;
   padding: 6px 12px;
   border-radius: 20px;
   border: none;
 }
-
-#sizes .active {
-  background: #ffd3b8;
-}
+#sizes .active { background: #ffd3b8; }
 
 #time {
   font-size: 26px;
   font-weight: 900;
-  margin-top: 5px;
 }
 
 main {
@@ -86,10 +67,6 @@ main {
   touch-action: none;
 }
 
-#board.locked {
-  opacity: 0.85;
-}
-
 .tile {
   aspect-ratio: 1;
   background: #5a2d12;
@@ -102,16 +79,9 @@ main {
   user-select: none;
 }
 
-.empty {
-  background: #f3d9c4;
-}
+.empty { background: #f3d9c4; }
 
-#best {
-  margin-top: 6px;
-  font-weight: 700;
-}
-
-#hint {
+.overlay {
   position: absolute;
   inset: 0;
   background: rgba(0,0,0,0.45);
@@ -120,26 +90,18 @@ main {
   display: flex;
   align-items: center;
   justify-content: center;
+  pointer-events: none;
 }
 
-.hidden {
-  display: none;
-}
+.hidden { display: none; }
 
 .ad-zone {
   margin: 12px auto;
   max-width: 320px;
-  animation: fadeIn .4s ease;
 }
-
 .ad-zone img {
   max-width: 100%;
   height: auto;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(6px); }
-  to { opacity: 1; transform: translateY(0); }
 }
 
 .modal {
@@ -147,7 +109,6 @@ main {
   inset: 0;
   background: rgba(0,0,0,0.6);
 }
-
 .box {
   background: #fff;
   border-radius: 20px;
@@ -156,13 +117,11 @@ main {
   max-width: 320px;
   margin: 20vh auto;
 }
-
 .clear-actions {
   display: flex;
   justify-content: center;
   gap: 10px;
 }
-
 .clear-actions button {
   padding: 10px 16px;
   border-radius: 999px;
