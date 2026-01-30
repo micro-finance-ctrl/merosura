@@ -210,3 +210,21 @@ function updateBest(){
 
 /* ===== BOOT ===== */
 reset();
+// ===== ランキング =====
+rankBtn.onclick = () => {
+  rankModal.classList.remove("hidden");
+};
+
+rankClose.onclick = () => {
+  rankModal.classList.add("hidden");
+};
+
+// ===== クリア後ボタン =====
+retryBtn.onclick = () => {
+  reset();
+};
+
+okBtn.onclick = () => {
+  setState("IDLE");
+};
+
