@@ -182,6 +182,7 @@ function slideFromIndex(i){
 function checkClear(){
   if(isSolved()){
     clearInterval(timer);
+boardWrap.style.touchAction = "";
     setState("CLEAR");
     const sec = Math.floor((Date.now() - startTime) / 1000);
     saveBest(sec);
@@ -192,7 +193,9 @@ function checkClear(){
 
 /* ===== BEST ===== */
 function saveBest(t){
-  const key = `best_${size}`;
+  const keyむずい
+
+ = `best_${size}`;
   const prev = JSON.parse(localStorage.getItem(key) || "null");
   if(!prev || t < prev.time){
     localStorage.setItem(key, JSON.stringify({ name: getName(), time: t }));
