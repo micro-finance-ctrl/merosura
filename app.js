@@ -19,11 +19,6 @@ const clearAd = document.getElementById("clearAd");
 const clearModal = document.getElementById("clearModal");
 const clearText = document.getElementById("clearText");
 
-const rankBtn = document.getElementById("rankBtn");
-const rankModal = document.getElementById("rankModal");
-const rankList = document.getElementById("rankList");
-const rankClose = document.getElementById("rankClose");
-
 const retryBtn = document.getElementById("retryBtn");
 const okBtn = document.getElementById("okBtn");
 
@@ -94,10 +89,8 @@ function reset(){
 startBtn.onclick = ()=>{
   if(state !== "IDLE") return;
 
-  // ★ 追加したのはこの1行だけ
   boardWrap.style.touchAction = "none";
 
-  // 効果音アンロック
   moveSound.play().catch(()=>{});
   moveSound.pause();
   moveSound.currentTime = 0;
@@ -140,10 +133,8 @@ function render(){
     if(n !== 0){
       d.addEventListener("pointerup", ()=>{
         if(state !== "PLAYING") return;
-
         moveSound.currentTime = 0;
         moveSound.play().catch(()=>{});
-
         slideFromIndex(i);
       });
     }
@@ -182,8 +173,9 @@ function slideFromIndex(i){
 function checkClear(){
   if(isSolved()){
     clearInterval(timer);
-boardWrap.style.touchAction = "";
+    boardWrap.style.touchAction = "";
     setState("CLEAR");
+
     const sec = Math.floor((Date.now() - startTime) / 1000);
     saveBest(sec);
     clearText.textContent = formatTime(sec);
@@ -193,9 +185,7 @@ boardWrap.style.touchAction = "";
 
 /* ===== BEST ===== */
 function saveBest(t){
-  const keyむずい
-
- = `best_${size}`;
+  const key = `best_${size}`;
   const prev = JSON.parse(localStorage.getItem(key) || "null");
   if(!prev || t < prev.time){
     localStorage.setItem(key, JSON.stringify({ name: getName(), time: t }));
@@ -208,23 +198,9 @@ function updateBest(){
     : `🍫 BEST (${size}×${size}) : --`;
 }
 
+/* ===== CLEAR BUTTONS ===== */
+retryBtn.onclick = reset;
+okBtn.onclick = reset;
+
 /* ===== BOOT ===== */
 reset();
-// ===== ランキング =====
-rankBtn.onclick = () => {
-  rankModal.classList.remove("hidden");
-};
-
-rankClose.onclick = () => {
-  rankModal.classList.add("hidden");
-};
-
-// ===== クリア後ボタン =====
-retryBtn.onclick = () => {
-  reset();
-};
-
-okBtn.onclick = () => {
-  setState("IDLE");
-};
-
